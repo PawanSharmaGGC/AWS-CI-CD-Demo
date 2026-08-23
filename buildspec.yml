@@ -10,13 +10,16 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building Docker image...
-      - docker build -t aws-cicd-demo:latest .
-
-      - echo Tagging Docker image...
+      - docker build -t aws-cicd-demo:latest "./AWS CI CD Demo"
       - docker tag aws-cicd-demo:latest 533266976950.dkr.ecr.ap-south-1.amazonaws.com/aws-cicd-demo:latest
 
   post_build:
     commands:
       - echo Pushing Docker image to Amazon ECR...
       - docker push 533266976950.dkr.ecr.ap-south-1.amazonaws.com/aws-cicd-demo:latest
-      - echo Build completed on `date`
+      - echo Creating image definitions file...
+      - printf '[{"name":"aws-cicd-container","imageUri":"533266976950.dkr.ecr.ap-south-1.amazonaws.com/aws-cicd-demo:latest"}]' > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
